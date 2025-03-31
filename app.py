@@ -6,6 +6,16 @@ import chroma
 from dotenv import load_dotenv
 
 load_dotenv()
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import sqlite3
+
+
+###########대시보드 생성을 위한 라이브러리 호출
+import dash
+import visualization
+############
 
 app = Flask(__name__)
 
@@ -120,6 +130,17 @@ def chatting():
     print(logs)
     llm_output = llm.get_chat_response(user_input=chat, prompt_input=logs)
     return jsonify(llm_output), 200
+
+
+# Plotly를 이용한 대시보드 만들기
+dash_app = visualization.create_dash_app(app)
+
+# 데시보드 시각화 flask 라우팅 추가
+@app.route('/dashboard')
+def dashboard():
+    user_id = request.args.get('user_id')
+    dash_app_html = dash_app.index()
+    return dash_app_html
 
 @app.route('/delete', methods = ['POST'])
 def delete_log():

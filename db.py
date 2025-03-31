@@ -9,8 +9,8 @@ def init_db():
               (id INTEGER PRIMARY KEY AUTOINCREMENT,
               user_id INTEGER, 
               user_input TEXT, 
-              encouragement TEXT, 
-              advice TEXT, 
+         TEXT, 
+         TEXT, 
               physical INTEGER, 
               knowledge INTEGER, 
               mental INTEGER,
@@ -118,6 +118,20 @@ def get_log_by_vector(indices):
             result.append(c.fetchone())
     conn.close()
     return result
+
+## 데이터베
+def get_weekly_data(user_id):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('''
+        SELECT physical, knowledge, mental, strftime('%Y-%m-%d', timestamp) as date
+        FROM logs
+        WHERE user_id = ?
+        ORDER BY timestamp ASC;
+    ''', (user_id,))
+    result = c.fetchall()
+    conn.close()
+    return [log for log in result]
 
 def get_log_count(user_id):
     conn = sqlite3.connect('database.db')
